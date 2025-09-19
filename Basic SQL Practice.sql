@@ -1,4 +1,4 @@
--- Mdoe Basic SQL Practice
+-- Mode Basic SQL Practice
 
 -- SELECT
 SELECT year,month, month_name, south, west, midwest, northeast
