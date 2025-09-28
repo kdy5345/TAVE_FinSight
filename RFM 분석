@@ -1,0 +1,90 @@
+import pandas as pd
+from sqlalchemy import create_engine
+import matplotlib.pyplot as plt
+
+# 1. MySQL 연결 정보 
+user = "root"
+password = "doyeon5345"        
+host = "localhost"
+port = 3306
+db = "paysim"            
+
+engine = create_engine(f"mysql+pymysql://{user}:{password}@{host}:{port}/{db}")
+
+# 2. SQL 실행 함수 정의
+def run_query(query):
+    return pd.read_sql_query(query, engine)
+
+# 3. 분석 SQL 실행
+# (1) 거래 현황 요약
+query1 = """
+SELECT 
+    COUNT(*) AS total_txn,
+    SUM(isFraud) AS fraud_txn,
+    ROUND(SUM(isFraud)/COUNT(*), 4) AS fraud_rate
+FROM paysim;
+"""
+df1 = run_query(query1)
+print("\n[1] 거래 현황 요약")
+print(df1)
+
+# (2) 거래 유형별 Fraud율
+query2 = """
+SELECT type,
+       COUNT(*) AS total_count,
+       SUM(isFraud) AS fraud_count,
+       ROUND(SUM(isFraud)/COUNT(*), 4) AS fraud_rate
+FROM paysim
+GROUP BY type
+ORDER BY fraud_rate DESC;
+"""
+df2 = run_query(query2)
+print("\n[2] 거래 유형별 Fraud율")
+print(df2)
+
+# (3) 고객별 RFM 요약
+query3 = """
+SELECT
+    nameOrig AS customer_id,
+    MAX(step) AS last_step,
+    ( (SELECT MAX(step) FROM paysim) - MAX(step) ) AS recency,
+    COUNT(*) AS frequency,
+    SUM(amount) AS total_monetary,
+    AVG(amount) AS avg_monetary,
+    MAX(isFraud) AS has_fraud
+FROM paysim
+GROUP BY nameOrig;
+"""
+df3 = run_query(query3)
+print("\n[3] 고객별 RFM 요약 (상위 5행)")
+print(df3.head())
+
+# (4) Fraud vs 정상 평균 비교
+query4 = f"""
+SELECT
+    has_fraud,
+    AVG(recency) AS avg_recency,
+    AVG(frequency) AS avg_frequency,
+    AVG(total_monetary) AS avg_total_monetary,
+    AVG(avg_monetary) AS avg_avg_monetary
+FROM ({query3}) t
+GROUP BY has_fraud;
+"""
+df4 = run_query(query4)
+print("\n[4] Fraud vs 정상 평균 비교")
+print(df4)
+
+# (5) 시간대별 Fraud 추세
+query5 = """
+SELECT
+    step,
+    COUNT(*) AS total_txn,
+    SUM(isFraud) AS fraud_txn
+FROM paysim
+GROUP BY step
+ORDER BY step;
+"""
+df5 = run_query(query5)
+print("\n[5] 시간대별 Fraud 추세 (상위 5행)")
+print(df5.head())
+
