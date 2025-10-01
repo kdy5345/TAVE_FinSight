@@ -1,4 +1,4 @@
--- leetcode 176, 177, 178, 180, 184, 185
+-- Leetcode 2주차
 
 -- [Leetcode 176] Second Highest Salary
 -- Employee 테이블에서 두 번째로 높은 급여를 찾는 쿼리
