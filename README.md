@@ -10,10 +10,10 @@ SQL을 활용해 핀테크 거래 로그 데이터(PaySim 등)를 분석하며, 
 
 ## 📅 주차별 흐름
 - **1주차**: PaySim 데이터 기본 통계 확인, SELECT~LIMIT 복습  
-- **2주차**: 사용자별 R/F/M 산출, GROUP BY·HAVING 실습  
-- **3주차**: 거래유형별 Revenue 집계, JOIN·피벗  
-- **4주차**: 퍼널 분석(CASH_IN → TRANSFER → CASH_OUT), Fraud 퍼널  
-- **5주차**: 신규 유저 코호트 리텐션, 윈도우 함수  
+- **2주차**: RFM 분석법 적용 및 시각화, GROUP BY·HAVING 실습, Leetcode sql 실습  
+- **3주차**: AARRR 분석법 적용 및 시각화, JOIN·피벗, Leetcode sql 실습  
+- **4주차**: 퍼널 분석(CASH_IN → TRANSFER → CASH_OUT), Fraud 퍼널, Leetcode sql 실습
+- **5주차**: 신규 유저 코호트 리텐션, 윈도우 함수, Leetcode sql 실습  
 - **6주차**: 이동평균·누적합, Fraud 포함 종합 인사이트 도출  
 
 ## ⚙️ 작업 환경
