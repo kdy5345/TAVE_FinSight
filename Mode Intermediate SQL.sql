@@ -114,3 +114,64 @@ ORDER BY year
 SELECT COUNT(DISTINCT month) AS month_values,
        COUNT(DISTINCT year) AS year_values
 FROM tutorial.aapl_historical_stock_price
+
+-- Joins
+SELECT players.school_name,
+       players.player_name,
+       players.position,
+       players.weight
+  FROM benn.college_football_players players -- 테이블 이름 뒤에 공백 추가 후 별칭 이름 입력
+ WHERE players.state = 'GA'
+ ORDER BY players.weight DESC
+
+-- INNER JOIN or JOIN
+-- join 조건을 만족하지 않는 행은 제거 (교집합)
+SELECT players.player_name,
+       players.school_name,
+       teams.conference
+  FROM benn.college_football_players players
+  JOIN benn.college_football_teams teams
+    ON teams.school_name = players.school_name
+ WHERE teams.division = 'FBS (Division I-A Teams)'
+
+-- OUTER JOIN
+-- 두 테이블 중 하나 또는 둘 다에서 일치하는 값 과 일치하지 않는 값을 반환하는 조인
+-- LEFT JOIN은 왼쪽 테이블에서 일치하지 않는 행만 반환하고 , 두 테이블에서 일치하는 행도 반환
+-- RIGHT JOIN은 오른쪽 테이블에서 일치하지 않는 행만 반환하고 , 두 테이블에서 일치하는 행도 반환
+-- FULL OUTER JOIN은 두 테이블 모두에서 일치하지 않는 행 과 두 테이블 모두에서 일치하는 행을 반환
+
+-- LEFT JOIN
+SELECT COUNT(companies.permalink) AS companies_rowcount,
+       COUNT(acquisitions.company_permalink) AS acquisitions_rowcount
+  FROM tutorial.crunchbase_companies companies
+  JOIN tutorial.crunchbase_acquisitions acquisitions
+    ON companies.permalink = acquisitions.company_permalink
+
+SELECT COUNT(companies.permalink) AS companies_rowcount,
+       COUNT(acquisitions.company_permalink) AS acquisitions_rowcount
+  FROM tutorial.crunchbase_companies companies
+  LEFT JOIN tutorial.crunchbase_acquisitions acquisitions
+    ON companies.permalink = acquisitions.company_permalink
+
+SELECT companies.state_code,
+       COUNT(DISTINCT companies.permalink) AS unique_companies,
+       COUNT(DISTINCT acquisitions.company_permalink) AS unique_companies_acquired
+  FROM tutorial.crunchbase_companies companies
+  LEFT JOIN tutorial.crunchbase_acquisitions acquisitions
+    ON companies.permalink = acquisitions.company_permalink
+ WHERE companies.state_code IS NOT NULL
+ GROUP BY 1
+ ORDER BY 3 DESC
+
+-- RIGHT JOIN
+-- RIGHT JOIN은 LEFT JOIN과 비슷하지만, RIGHT JOIN 절의 모든 행을 반환하고 FROM 절에 있는 행과 일치하는 것만 반환한다.
+-- LEFT JOIN에서 조인된 두개의 테이블 이름만 바꾸면 RIGHT JOIN이 되기 때문에 RIGHT JOIN은 잘 사용하지 않음
+SELECT companies.state_code,
+       COUNT(DISTINCT companies.permalink) AS unique_companies,
+       COUNT(DISTINCT acquisitions.company_permalink) AS acquired_companies
+  FROM tutorial.crunchbase_acquisitions acquisitions
+ RIGHT JOIN tutorial.crunchbase_companies companies
+    ON companies.permalink = acquisitions.company_permalink
+ WHERE companies.state_code IS NOT NULL
+ GROUP BY 1
+ ORDER BY 3 DESC
