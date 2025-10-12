@@ -47,4 +47,4 @@ FROM Users as u
 LEFT JOIN Orders as o  -- 주문이 0인 사용자도 보여야하기 때문에 LEFT JOIN 사용
 ON u.user_id = o.buyer_id  -- 조인 조건 1: 고객 id와 구매자 id가 동일 -> 고객 주문 내역
 AND YEAR(order_date) = '2019'  -- 조인 조건 2: 2019년에만 한 주문
-GROUP BY u.user_id  -- 사용자별로 주문수 집계
+GROUP BY u.user_id  -- 사용자별로 주문수 집계, mysql에서만 가능 
