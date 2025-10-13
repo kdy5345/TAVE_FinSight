@@ -175,3 +175,71 @@ SELECT companies.state_code,
  WHERE companies.state_code IS NOT NULL
  GROUP BY 1
  ORDER BY 3 DESC
+
+-- Joins using WHERE or ON
+-- WHERE 절 사용시 테이블이 조인된 후에 필터가 적용됨
+SELECT companies.name AS company_name,
+       companies.status,
+       COUNT(DISTINCT investments.investor_name) AS unqiue_investors
+  FROM tutorial.crunchbase_companies companies
+  LEFT JOIN tutorial.crunchbase_investments investments
+    ON companies.permalink = investments.company_permalink
+ WHERE companies.state_code = 'NY'
+ GROUP BY 1,2
+ ORDER BY 3 DESC
+
+SELECT CASE WHEN investments.investor_name IS NULL THEN 'No Investors'
+            ELSE investments.investor_name END AS investor,
+       COUNT(DISTINCT companies.permalink) AS companies_invested_in
+  FROM tutorial.crunchbase_companies companies
+  LEFT JOIN tutorial.crunchbase_investments investments
+    ON companies.permalink = investments.company_permalink
+ GROUP BY 1
+ ORDER BY 2 DESC
+
+-- FULL OUTER JOIN
+-- 일반적으로 집계와 함께 사용되며, 두 테이블 간의 겹치는 정도를 확인하기 위해 사용
+    SELECT COUNT(CASE WHEN companies.permalink IS NOT NULL AND investments.company_permalink IS NULL
+                      THEN companies.permalink ELSE NULL END) AS companies_only,
+           COUNT(CASE WHEN companies.permalink IS NOT NULL AND investments.company_permalink IS NOT NULL
+                      THEN companies.permalink ELSE NULL END) AS both_tables,
+           COUNT(CASE WHEN companies.permalink IS NULL AND investments.company_permalink IS NOT NULL
+                      THEN investments.company_permalink ELSE NULL END) AS investments_only
+      FROM tutorial.crunchbase_companies companies
+      FULL JOIN tutorial.crunchbase_investments_part1 investments
+        ON companies.permalink = investments.company_permalink
+
+-- UNION
+-- 고유한 값만 추가
+-- 추가된 테이블에서 첫 번째 테이블의 행과 정확히 동일한 행은 삭제
+SELECT company_permalink,
+       company_name,
+       investor_name
+  FROM tutorial.crunchbase_investments_part1
+ WHERE company_name ILIKE 'T%'
+ 
+ UNION ALL
+
+SELECT company_permalink,
+       company_name,
+       investor_name
+  FROM tutorial.crunchbase_investments_part2
+ WHERE company_name ILIKE 'M%'
+
+SELECT 'investments_part1' AS dataset_name,
+       companies.status,
+       COUNT(DISTINCT investments.investor_permalink) AS investors
+  FROM tutorial.crunchbase_companies companies
+  LEFT JOIN tutorial.crunchbase_investments_part1 investments
+    ON companies.permalink = investments.company_permalink
+ GROUP BY 1,2
+
+ UNION ALL
+ 
+ SELECT 'investments_part2' AS dataset_name,
+       companies.status,
+       COUNT(DISTINCT investments.investor_permalink) AS investors
+  FROM tutorial.crunchbase_companies companies
+  LEFT JOIN tutorial.crunchbase_investments_part2 investments
+    ON companies.permalink = investments.company_permalink
+ GROUP BY 1,2
