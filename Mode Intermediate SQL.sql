@@ -262,3 +262,13 @@ SELECT 'investments_part1' AS dataset_name,
   LEFT JOIN tutorial.crunchbase_investments_part2 investments
     ON companies.permalink = investments.company_permalink
  GROUP BY 1,2
+
+-- Joins with Comparison Operators
+-- ON 문에 어떤 유형의 조건문이든 입력할 수 있다.
+
+-- Joins on Multiple Keys
+-- 여러 외래 키를 기준으로 테이블을 조인하는 것은 정확성과 성능과 관련이 있음(쿼리 속도 향상)
+
+-- Self Joins
+-- 때로는 테이블을 자기 자신과 조인하는 것이 유용할 수 있음
+-- 같은 테이블이 다른 별칭으로 여러번 조인될 수 있음
